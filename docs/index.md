@@ -6,12 +6,4 @@ Me siento orgulloso de la disciplina que he construido y he desmostrado en varia
 
 Mi correo es: 196866@iberopuebla.mx 
 
----
-
-## Empezar rápido (3 pasos)
-
-1. **Edita el nombre del sitio** en `mkdocs.yml`:
-   ```yaml
-   site_name: Documentación del Curso
-   theme:
-     name: material
+<img>docs/recursos/imgs/f0456f76-555d-46f5-98c0-cd51bb9e5fe31.webp
