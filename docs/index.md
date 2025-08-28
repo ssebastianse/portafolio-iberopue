@@ -6,4 +6,4 @@ Me siento orgulloso de la disciplina que he construido y he desmostrado en varia
 
 Mi correo es: 196866@iberopuebla.mx 
 
-<img>docs/recursos/imgs/f0456f76-555d-46f5-98c0-cd51bb9e5fe31.webp
+
