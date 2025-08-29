@@ -6,7 +6,6 @@ Me siento orgulloso de la disciplina que he construido y he desmostrado en varia
 
 Mi correo es: 196866@iberopuebla.mx 
 
-![Alt text](https://github.com/ssebastianse/portafolio-iberopue/blob/main/docs/recursos/imgs/037d1e05-a0dd-4a18-93c0-66c0d0971a8b1.webp)
-<img src="https://github.com/ssebastianse/portafolio-iberopue/blob/main/docs/recursos/imgs/037d1e05-a0dd-4a18-93c0-66c0d0971a8b1.webp" width="300">
+<img src="https://github.com/ssebastianse/portafolio-iberopue/blob/main/docs/recursos/imgs/037d1e05-a0dd-4a18-93c0-66c0d0971a8b1.webp" width="200">
 
 
