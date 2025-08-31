@@ -6,6 +6,6 @@ Me siento orgulloso de la disciplina que he construido y he desmostrado en varia
 
 Mi correo es: 196866@iberopuebla.mx 
 
-<img src="docs/recursos/imgs/fotoperfil.png" width="200">
+<img src="[docs/recursos/imgs/fotoperfil.png](https://github.com/ssebastianse/portafolio-iberopue/blob/main/docs/recursos/imgs/fotoperfil.png)" width="200">
 
 
