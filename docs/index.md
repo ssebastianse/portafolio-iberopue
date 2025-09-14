@@ -16,7 +16,7 @@ Controlar luz LED por Bluetooth.
 
 Controlar luz LED con boton.
 <video controls>
-  <source src="docs/recursos/imgs/CircuitoLEDBoton.TS.mp4" type="video/mp4">
+  <source src="docs/recursos/imgs/CircuitoLEDBoton.mp4" type="video/mp4">
 </video>
 
 Código controlar luz LED por boton
