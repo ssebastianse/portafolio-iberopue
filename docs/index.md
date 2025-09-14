@@ -20,4 +20,4 @@ Controlar luz LED con boton.
 </video>
 
 Código controlar luz LED por boton
-<img src="recursos/imgs/CodigoLEDBoton.jpg">
+<img src="recursos/imgs/CodigoLEDBoton.jpg" width="500">
