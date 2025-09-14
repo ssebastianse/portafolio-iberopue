@@ -10,5 +10,9 @@ Mi correo es: 196866@iberopuebla.mx
 
 # Trabajos/Proyectos
 
+<video controls>
+  <source src="recursos/videos/miVideo.mp4" type="video/mp4">
+</video>
+
 
 
