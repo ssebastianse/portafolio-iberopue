@@ -14,5 +14,9 @@ Mi correo es: 196866@iberopuebla.mx
   <source src="recursos/imgs/VID_20250913_211638_875~2.mp4" type="video/mp4">
 </video>
 
+<video controls width="640">
+  <source src="recursos/imgs/VID_20250913_211638_875~2.mp4" type="video/mp4">
+</video>
+
 
 
