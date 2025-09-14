@@ -9,14 +9,9 @@ Mi correo es: 196866@iberopuebla.mx
 <img src="recursos/imgs/fotoperfil.png" width="200">
 
 # Trabajos/Proyectos
-
+Controlar luz LED por Bluetooth
 <video controls>
   <source src="recursos/imgs/VID_20250913_211638_875~2.mp4" type="video/mp4">
 </video>
-
-<video controls width="640">
-  <source src="recursos/imgs/VID_20250913_211638_875~2.mp4" type="video/mp4">
-</video>
-
 
 
