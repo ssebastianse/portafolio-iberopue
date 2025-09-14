@@ -18,3 +18,6 @@ Controlar luz LED con boton.
 <video controls>
   <source src="docs/recursos/imgs/CircuitoLEDBoton.TS.mp4" type="video/mp4">
 </video>
+
+Código controlar luz LED por boton
+<img src="recursos/imgs/CodigoLEDBoton.jpg">
