@@ -24,7 +24,7 @@ Cambio de giro de motor
 Cambio gradual de velocidad de motor
 
 Servomotor ciclo 0-10-0-20-0-30... hasta 180
-<video controls>
+<video controls style="width: 75%; max-width: 800px;">
   <source src="recursos/imgs/servomotor-ciclo-0-10-0-20.mp4" type="video/mp4">
 </video>
 
