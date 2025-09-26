@@ -9,21 +9,25 @@ Mi correo es: 196866@iberopuebla.mx
 <img src="recursos/imgs/fotoperfil.png" width="200">
 
 # Trabajos/Proyectos
-Controlar luz LED por Bluetooth.
+## **Controlar luz LED por Bluetooth.**
 <video controls>
   <source src="recursos/imgs/ControlarLEDBluetooth.mp4" type="video/mp4">
 </video>
 
-Controlar luz LED con boton.
+
+## **Controlar luz LED con boton.**
 <video controls style="width: 50%; max-width: 400px;">
   <source src="recursos/imgs/PXL_20250912_163927244.TS(1).mp4" type="video/mp4">
 </video>
 
-Cambio de giro de motor
 
-Cambio gradual de velocidad de motor
+## **Cambio de giro de motor**
 
-Servomotor ciclo 0-10-0-20-0-30... hasta 180
+
+## **Cambio gradual de velocidad de motor**
+
+
+## **Servomotor ciclo 0-10-0-20-0-30... hasta 180**
 <video controls style="width: 75%; max-width: 800px;">
   <source src="recursos/imgs/servomotor-ciclo-0-10-0-20.mp4" type="video/mp4">
 </video>
