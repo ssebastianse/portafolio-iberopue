@@ -22,10 +22,14 @@ Mi correo es: 196866@iberopuebla.mx
 
 
 ## **Cambio de giro de motor**
-
+<video controls style="width: 75%; max-width: 800px;">
+  <source src="recursos/imgs/cambio-giro-motor.mp4" type="video/mp4">
+</video>
 
 ## **Cambio gradual de velocidad de motor**
-
+<video controls style="width: 75%; max-width: 800px;">
+  <source src="recursos/imgs/cambio-gradual-giro-motor.mp4" type="video/mp4">
+</video>
 
 ## **Servomotor ciclo 0-10-0-20-0-30... hasta 180**
 <video controls style="width: 75%; max-width: 800px;">
