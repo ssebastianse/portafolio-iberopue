@@ -18,3 +18,9 @@ Controlar luz LED con boton.
 <video controls>
   <source src="recursos/imgs/PXL_20250912_163927244.TS(1).mp4" type="video/mp4">
 </video>
+
+Cambio de giro de motor
+
+Cambio gradual de velocidad de motor
+
+Servomotor ciclo 0-10-0-20-0-30... hasta 180
