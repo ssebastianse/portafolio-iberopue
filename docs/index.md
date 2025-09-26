@@ -22,12 +22,12 @@ Mi correo es: 196866@iberopuebla.mx
 
 
 ## **Cambio de giro de motor**
-<video controls style="width: 75%; max-width: 800px;">
+<video controls style="width: 75%; max-width: 400px;">
   <source src="recursos/imgs/cambio-giro-motor.mp4" type="video/mp4">
 </video>
 
 ## **Cambio gradual de velocidad de motor**
-<video controls style="width: 75%; max-width: 800px;">
+<video controls style="width: 75%; max-width: 400px;">
   <source src="recursos/imgs/cambio-gradual-giro-motor.mp4" type="video/mp4">
 </video>
 
