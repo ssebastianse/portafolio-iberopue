@@ -45,7 +45,7 @@ En este trabajo hicimos que un servomotor fuera aumentando de 10° en 10° pero 
 Ocupamos: Protoboarb, ESP 32, servomotor.
 
 ## **PROYECTO: Coche a control remoto Bluetooth**
-<img src="recursos/imgs/coche codigo.jpg" width="400">
+<img src="recursos/imgs/coche codigo.jpg" width="400">   
 En este proyecto construimos un coche a control remoto Bluetooth. El material que usamos para el coche:
 - 4 Motorreductores TT
 - 4 Llantas Omnidireccionales  
@@ -53,4 +53,8 @@ En este proyecto construimos un coche a control remoto Bluetooth. El material qu
 - 1 Protoboard   
 - 1 ESP 32  
 - Jumpers  
-
+- 2 Pilas  
+- Control Xbox  
+Las 2 Pilas se conectan para alimentar todo el sistema. Los Puentes H se usan para poder controlar los 4 motores TT (1 Puente H por 2 motores TT), cada Puente H controla la dirección y velocidad de dos motores a la vez.   
+El ESP32 se pone en la Protoboard y se conecta a las entradas de los Puentes H usando Jumpers.    
+El código dentro del ESP32 está configurado para conectarse al control Xbox, luego lee el movimiento del joystick y dependiendo de la dirección del joystick se activa una función para que los motores se activen de manera específica para moverse en esa dirección.  
