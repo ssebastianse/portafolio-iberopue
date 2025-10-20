@@ -44,5 +44,6 @@ Aqui el mismo circuito que en el trabajo pasado, pero cambiamos el código del E
 En este trabajo hicimos que un servomotor fuera aumentando de 10° en 10° pero regresando a 0° entre cada subida.
 Ocupamos: Protoboarb, ESP 32, servomotor.
 
-
+## **PROYECTO: Coche a control remoto Bluetooth**
+<img src="recursos/imgs/coche codigo.jpg" width="400">
 
