@@ -58,3 +58,4 @@ En este proyecto construimos un coche a control remoto Bluetooth. El material qu
 Las 2 Pilas se conectan para alimentar todo el sistema. Los Puentes H se usan para poder controlar los 4 motores TT (1 Puente H por 2 motores TT), cada Puente H controla la dirección y velocidad de dos motores a la vez.   
 El ESP32 se pone en la Protoboard y se conecta a las entradas de los Puentes H usando Jumpers.    
 El código dentro del ESP32 está configurado para conectarse al control Xbox, luego lee el movimiento del joystick y dependiendo de la dirección del joystick se activa una función para que los motores se activen de manera específica para moverse en esa dirección.  
+<img src="recursos/imgs/coche codigo.jpg" width="200">   
