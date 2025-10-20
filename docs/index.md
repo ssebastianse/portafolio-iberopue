@@ -46,4 +46,11 @@ Ocupamos: Protoboarb, ESP 32, servomotor.
 
 ## **PROYECTO: Coche a control remoto Bluetooth**
 <img src="recursos/imgs/coche codigo.jpg" width="400">
+En este proyecto construimos un coche a control remoto Bluetooth. El material que usamos para el coche:
+- 4 Motorreductores TT
+- 4 Llantas Omnidireccionales  
+- 2 Puentes H  
+- 1 Protoboard   
+- 1 ESP 32  
+- Jumpers  
 
