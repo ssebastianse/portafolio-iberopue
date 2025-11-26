@@ -60,3 +60,70 @@ Las 2 Pilas se conectan para alimentar todo el sistema. Los Puentes H se usan pa
 El ESP32 se pone en la Protoboard y se conecta a las entradas de los Puentes H usando Jumpers.    
 El código dentro del ESP32 está configurado para conectarse al control Xbox, luego lee el movimiento del joystick y dependiendo de la dirección del joystick se activa una función para que los motores se activen de manera específica para moverse en esa dirección.  
 <img src="recursos/imgs/pertesfinalescoche.jpg" width="200">   
+
+
+### ** Código Python cámara parte 1 **
+
+En este trabajo logramos iniciar la cámara en python, modificar los colores y dibujar líneas y circulos.
+   ```python
+import cv2
+import numpy as np
+
+video = cv2.VideoCapture(0)
+
+
+
+#centrox=0
+#centroy=0
+
+
+while True:
+
+    ret, img = video.read()
+
+    #img2 = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    #img3 = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+    #img4 = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    if not ret:
+        break
+
+
+    cv2.imshow("Mivideo",img)
+
+
+
+    #DIBUJAR COSAS
+    #draw = img.copy ()
+    #LINEA
+    #cv2.line(draw,(0,0),(100,100),(0,0,255),thickness=3, lineType=cv2.LINE_AA)
+    #CIRCULO
+    #cv2.circle(draw,(centrox,centroy),50,(0,0,255),thickness=3, lineType=cv2.LINE_AA)
+    #cv2.imshow("Mivideodraw",draw)
+    #centrox=centrox+1
+    #if centrox<300:
+    #    centrox=centrox+1
+    #else:
+    #    centrox=0
+
+
+    #CAMBIOS DE COLORES
+    #imgCopia = img.copy()
+    #imgCopia[:, :, 1] = 0
+    #imgCopia[:, :, 0] = 0
+    #imgCopia[0:300, 0:300, 2] = 0
+    
+    #MOSTRAR IMAGEN
+    #cv2.imshow("Mivideo1",img2)
+    #cv2.imshow("Mivideo2",img3)
+    #cv2.imshow("Mivideo3",img4)
+    #cv2.imshow("Mivideo",no_blue)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+video.release()
+cv2.destroyAllWindows()
+
+```
+
+
