@@ -62,20 +62,17 @@ El código dentro del ESP32 está configurado para conectarse al control Xbox, l
 <img src="recursos/imgs/pertesfinalescoche.jpg" width="200">   
 
 
-### ** Código Python cámara parte 1 **
+### **Código Python cámara parte 1**
 
 En este trabajo logramos iniciar la cámara en python, modificar los colores y dibujar líneas y circulos.
-   ```python
+```
 import cv2
 import numpy as np
 
 video = cv2.VideoCapture(0)
 
-
-
 #centrox=0
 #centroy=0
-
 
 while True:
 
