@@ -62,7 +62,7 @@ El código dentro del ESP32 está configurado para conectarse al control Xbox, l
 <img src="recursos/imgs/pertesfinalescoche.jpg" width="200">   
 
 
-### **Código Python cámara parte 1**
+### **Código Python Vision por Cámara, dibujar en cámara**
 
 En este trabajo logramos iniciar la cámara en python, modificar los colores y dibujar líneas y circulos.
 ```
@@ -122,5 +122,166 @@ video.release()
 cv2.destroyAllWindows()
 
 ```
+
+
+### **Código Python Vision por cámara. Rastreo de cara**
+
+Este código Python utiliza OpenCV para realizar detección de rostros en tiempo real. Esto lo logra cargando un modelo pre-entrenado de detección de rostros basado en Caffe. Si encuentra un rostro con una confianza superior al umbral (detection_treshold), dibuja un cuadrado de color verde y muestra el valor de la confianza que cree que sea un rostro alrededor del rostro.
+
+```
+import cv2
+import numpy as np
+
+video = cv2.VideoCapture(0)
+
+#variables de detección
+
+mean = [104,117,123]
+scale = 1.0
+in_width = 300
+in_height = 300
+
+detection_treshold = 0.5
+
+net = cv2.dnn.readNetFromCaffe('models/deploy.prototxt', 'models/res10_300x300_ssd_iter_140000.caffemodel')
+
+def detect(frame, net, scale, in_width, in_height):
+    h = frame.shape[0]
+    w = frame.shape[1]
+    blob = cv2.dnn.blobFromImage(frame, scalefactor=scale,
+                                 size=(in_width, in_height), mean=mean, swapRB=False, crop=False)
+    # Pasar el blob a la red
+    net.setInput(blob)
+    # Pasra el blob a la red
+    detections = net.forward()
+ 
+    # Procesar las detecciones
+    for i in range(detections.shape[2]):
+        confidence = detections[0, 0, i, 2]
+        if confidence > detection_treshold:
+           
+            #Extraer las coordenadas del bounding box de la detección
+            box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+            (x1, y1, x2, y2) = box.astype('int')
+           
+            # Dibujar el bounding box y el texto
+            cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
+            label = 'Confidence: %.4f' % confidence
+            label_size, base_line = cv2.getTextSize(label, cv2.FONT_HERSHEY_SIMPLEX, 0.5, 1)
+            cv2.rectangle(frame, (x1, y1 - label_size[1]), (x1 + label_size[0], y1 + base_line),
+                          (255, 255, 255), cv2.FILLED)
+            cv2.putText(frame, label, (x1, y1),  cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
+    return frame
+
+#centrox=0
+#centroy=0
+
+while True:
+
+    ret, img = video.read()
+
+    #img2 = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    #img3 = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+    #img4 = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    if not ret:
+        break
+
+    img2 = detect(img,net, scale, in_width, in_height)
+    cv2.imshow("Mivideo",img2)
+    
+    #draw = img.copy ()
+    #LINEA
+    #cv2.line(draw,(0,0),(100,100),(0,0,255),thickness=3, lineType=cv2.LINE_AA)
+    #CIRCULO
+    #cv2.circle(draw,(centrox,centroy),50,(0,0,255),thickness=3, lineType=cv2.LINE_AA)
+    #cv2.imshow("Mivideodraw",draw)
+    #centrox=centrox+1
+    #if centrox<300:
+    #    centrox=centrox+1
+    #else:
+    #    centrox=0
+
+
+    #CAMBIOS DE COLORES
+    #no_blue = img.copy()
+    #no_blue[:, :, 1] = 0
+    #no_blue[:, :, 0] = 0
+    #no_blue[0:300, 0:300, 2] = 0
+    
+    #MOSTRAR IMAGEN
+    #cv2.imshow("Mivideo1",img2)
+    #cv2.imshow("Mivideo2",img3)
+    #cv2.imshow("Mivideo3",img4)
+    #cv2.imshow("Mivideo",no_blue)
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
+
+video.release()
+cv2.destroyAllWindows()
+```
+### **Código Python Vision por cámara. Dibujar circulo alrededor de pelota.**
+
+Este código busca el controno mayor redondo que sea de color verde para marcarlo con un circulo amarillo de seguimiento.
+
+```
+import cv2
+import numpy as np
+
+cap = cv2.VideoCapture(0)  
+
+while True:
+    ok, img = cap.read()
+    if not ok:
+        break
+
+    #mostrar camara normal
+    cv2.imshow("Frame", img)
+
+    #cambio a hsv
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    #hacer mascara, solo mostrar un color
+    low  = np.array([35,  60,  60], dtype=np.uint8) # low es
+    high = np.array([85, 255, 255], dtype=np.uint8)
+    mask = cv2.inRange(hsv, low, high)
+
+    #mascara final
+    seg = cv2.bitwise_and(img, img, mask=mask)
+
+    #hacer contorno
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    out = img.copy()
+
+
+    area_mayor = 0
+    #checar area mayor
+    for actual in contours:
+        area = cv2.contourArea(actual)
+        if area > area_mayor:
+            area_mayor=area
+            contorno_mayor=actual
+        else: 
+            continue
+
+    cv2.drawContours(seg, contorno_mayor, -1, (0,255,0), 2)
+
+    (x, y), radius = cv2.minEnclosingCircle(contorno_mayor)
+    cv2.circle(out, (int(x), int(y)), int(radius), (0,255,255), 2)
+    cv2.circle(out, (int(x), int(y)), 2, (0,0,255), 2)
+
+    #cv2.imshow("Mask", mask) #mascara
+    #cv2.imshow("Segmentado", seg)  #mascara final con color
+    #cv2.imshow("hsv", hsv) 
+
+    cv2.imshow("contornos", out) 
+
+    if cv2.waitKey(1) & 0xFF == ord('x'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+```
+
 
 
