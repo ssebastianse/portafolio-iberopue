@@ -1,4 +1,4 @@
-# PROYECTO: Robot con Visión por Computadora y Control PID
+# Robot con Visión por Computadora y Control PID
 
 ## Descripción General
 
@@ -111,154 +111,153 @@ esp32.write(mensaje.encode())
 ## Mecánica
 ![Multimedia](https://github.com/user-attachments/assets/925b56c5-983c-4463-8b97-83ee4fd21169)![Multimedia (1)](https://github.com/user-attachments/assets/f7d7f766-1d27-45a5-99fc-aa2649a0c96f)![Foto seleccionada](https://github.com/user-attachments/assets/6f1e95bc-75f0-48e3-ade8-899db7e5f94b)
 
-
+---
 ## Código P
 
-´´´
-      Python (Visión por Computadora)
-    
-    python
-    import cv2
-    import time
-    import numpy as np
-    import serial
-    import serial.tools.list_ports
-    
-    # ------------------- Configuración Serial Bluetooth -------------------
-    esp32_port = 'COM3'
-    baud_rate = 115200
-     
-    print("=" * 50)
-    print("Intentando conectar con ESP32...")
-    print(f"Puerto: {esp32_port} | Baudios: {baud_rate}")
-    
-    def listar_puertos():
-        puertos = serial.tools.list_ports.comports()
-        print("\n Puertos COM disponibles:")
-        if len(puertos) == 0:
-            print("  No se encontraron puertos COM")
-        for puerto in puertos:
-            print(f"   • {puerto.device}: {puerto.description}")
-        print()
-    
-    listar_puertos()
-    
-    try:
-        esp32 = serial.Serial(esp32_port, baud_rate, timeout=1)
-        time.sleep(2)
-        print(f" ¡Conectado al ESP32 en {esp32_port}!")
-    except serial.SerialException as e:
-        print(f" Error de conexión serial: {e}")
-        print("\n Posibles soluciones:")
-        print("   1. Verifica que el puerto COM sea correcto")
-        print("   2. Cierra el IDE de Arduino si está abierto")
-        print("   3. Cierra cualquier monitor serial activo")
-        print("   4. Desconecta y reconecta el ESP32")
-        print("   5. Verifica que el ESP32 esté encendido")
-        esp32 = None
-    except Exception as e:
-        print(f" Error inesperado: {e}")
-        esp32 = None
-    
-    print("=" * 50)
-     
-    # ------------------- Configuración cámara -------------------
-    cap = cv2.VideoCapture(1)
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-    
-    if not cap.isOpened():
-        print("Error: No se pudo abrir la cámara")
-        exit()
-     
-    # ------------------- Posición inicial servos -------------------
-    center_angle = 50
-    current_x = center_angle
-    current_y = center_angle
-    DEAD_ZONE = 15  # Zona muerta reducida
-    smoothing = 0.3  # Suavizado reducido para respuesta más rápida
-     
-    # ------------------- Parámetros PID ajustables -------------------
-    Kp = 0.15
-    Ki = 0.001
-    Kd = 0.20
-    
-    prev_error_x = 0
-    prev_error_y = 0
-    integral_x = 0
-    integral_y = 0
-    
-    MAX_INTEGRAL = 50
-    
-    # ------------------- Parámetros de detección -------------------
-    # Threshold para plataforma NEGRA (0-255, valor V en HSV)
-    THRESHOLD_PLATAFORMA = 120  # Ampliado para detectar más tonos
-    AREA_MIN_PLATAFORMA = 1000  # Área mínima del cuadrado
-    
-    # Rango HSV para pelota azul
-    LOW_BLUE = np.array([100, 150, 70])
-    HIGH_BLUE = np.array([130, 255, 255])
-    AREA_MIN_PELOTA = 200
-    RADIO_MIN_PELOTA = 8
-    
-    # ------------------- Función para limitar valores -------------------
-    def constrain(value, min_val, max_val):
-        return max(min_val, min(max_val, value))
-    
-    # ------------------- Callbacks para sliders -------------------
-    def update_kp(val):
-        global Kp
-        Kp = val / 100.0  # Slider 0-100, valor real 0.00-1.00
-        print(f"Kp = {Kp:.3f}")
-    
-    def update_ki(val):
-        global Ki
-        Ki = val / 1000.0  # Slider 0-100, valor real 0.000-0.100
-        print(f"Ki = {Ki:.4f}")
-    
-    def update_kd(val):
-        global Kd
-        Kd = val / 100.0  # Slider 0-100, valor real 0.00-1.00
-        print(f"Kd = {Kd:.3f}")
-    
-    # ------------------- Crear ventana de control -------------------
-    cv2.namedWindow('Control PID')
-    cv2.createTrackbar('Kp x100', 'Control PID', int(Kp * 100), 100, update_kp)
-    cv2.createTrackbar('Ki x1000', 'Control PID', int(Ki * 1000), 100, update_ki)
-    cv2.createTrackbar('Kd x100', 'Control PID', int(Kd * 100), 100, update_kd)
-    
-    prev_time = time.time()
-    print("=" * 50)
-    print("Sistema de Balance: Plataforma + Pelota")
-    print("=" * 50)
-    print("CONFIGURACIÓN:")
-    print(f"  • Centro servos: {center_angle}° (Rango: 0-180°)")
-    print(f"  • Zona muerta: ±{DEAD_ZONE} píxeles")
-    print(f"  • Suavizado: {smoothing}")
-    print(f"  • Threshold plataforma: {THRESHOLD_PLATAFORMA}")
-    print(f"  • PID: Kp={Kp} Ki={Ki} Kd={Kd}")
-    print("\nDETECCIÓN:")
-    print("  • PLATAFORMA NEGRA (HSV): Detecta área más grande de tonos oscuros")
-    print("  • PELOTA AZUL: Posición para calcular error")
-    print("  • Usa teclas '1'/'2' para ajustar threshold")
-    print("\nCONTROLES:")
-    print("  • 'q' → Salir")
-    print("  • 'c' → Resetear integrales")
-    print("  • '1' → Threshold -5")
-    print("  • '2' → Threshold +5")
-    print("  • Sliders → Ajustar PID en tiempo real")
-    print("=" * 50)
-     
-    frame_count = 0
-    fps_time = time.time()
-    fps = 0
-    
-    while True:
-        ret, frame = cap.read()
-        if not ret:
-            print("Error: No se pudo leer frame de la cámara")
-            break
-            
+Python (Visión por Computadora)
+
+python
+import cv2
+import time
+import numpy as np
+import serial
+import serial.tools.list_ports
+
+# ------------------- Configuración Serial Bluetooth -------------------
+esp32_port = 'COM3'
+baud_rate = 115200
+ 
+print("=" * 50)
+print("Intentando conectar con ESP32...")
+print(f"Puerto: {esp32_port} | Baudios: {baud_rate}")
+
+def listar_puertos():
+    puertos = serial.tools.list_ports.comports()
+    print("\n Puertos COM disponibles:")
+    if len(puertos) == 0:
+        print("  No se encontraron puertos COM")
+    for puerto in puertos:
+        print(f"   • {puerto.device}: {puerto.description}")
+    print()
+
+listar_puertos()
+
+try:
+    esp32 = serial.Serial(esp32_port, baud_rate, timeout=1)
+    time.sleep(2)
+    print(f" ¡Conectado al ESP32 en {esp32_port}!")
+except serial.SerialException as e:
+    print(f" Error de conexión serial: {e}")
+    print("\n Posibles soluciones:")
+    print("   1. Verifica que el puerto COM sea correcto")
+    print("   2. Cierra el IDE de Arduino si está abierto")
+    print("   3. Cierra cualquier monitor serial activo")
+    print("   4. Desconecta y reconecta el ESP32")
+    print("   5. Verifica que el ESP32 esté encendido")
+    esp32 = None
+except Exception as e:
+    print(f" Error inesperado: {e}")
+    esp32 = None
+
+print("=" * 50)
+ 
+# ------------------- Configuración cámara -------------------
+cap = cv2.VideoCapture(1)
+cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
+cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
+
+if not cap.isOpened():
+    print("Error: No se pudo abrir la cámara")
+    exit()
+ 
+# ------------------- Posición inicial servos -------------------
+center_angle = 50
+current_x = center_angle
+current_y = center_angle
+DEAD_ZONE = 15  # Zona muerta reducida
+smoothing = 0.3  # Suavizado reducido para respuesta más rápida
+ 
+# ------------------- Parámetros PID ajustables -------------------
+Kp = 0.15
+Ki = 0.001
+Kd = 0.20
+
+prev_error_x = 0
+prev_error_y = 0
+integral_x = 0
+integral_y = 0
+
+MAX_INTEGRAL = 50
+
+# ------------------- Parámetros de detección -------------------
+# Threshold para plataforma NEGRA (0-255, valor V en HSV)
+THRESHOLD_PLATAFORMA = 120  # Ampliado para detectar más tonos
+AREA_MIN_PLATAFORMA = 1000  # Área mínima del cuadrado
+
+# Rango HSV para pelota azul
+LOW_BLUE = np.array([100, 150, 70])
+HIGH_BLUE = np.array([130, 255, 255])
+AREA_MIN_PELOTA = 200
+RADIO_MIN_PELOTA = 8
+
+# ------------------- Función para limitar valores -------------------
+def constrain(value, min_val, max_val):
+    return max(min_val, min(max_val, value))
+
+# ------------------- Callbacks para sliders -------------------
+def update_kp(val):
+    global Kp
+    Kp = val / 100.0  # Slider 0-100, valor real 0.00-1.00
+    print(f"Kp = {Kp:.3f}")
+
+def update_ki(val):
+    global Ki
+    Ki = val / 1000.0  # Slider 0-100, valor real 0.000-0.100
+    print(f"Ki = {Ki:.4f}")
+
+def update_kd(val):
+    global Kd
+    Kd = val / 100.0  # Slider 0-100, valor real 0.00-1.00
+    print(f"Kd = {Kd:.3f}")
+
+# ------------------- Crear ventana de control -------------------
+cv2.namedWindow('Control PID')
+cv2.createTrackbar('Kp x100', 'Control PID', int(Kp * 100), 100, update_kp)
+cv2.createTrackbar('Ki x1000', 'Control PID', int(Ki * 1000), 100, update_ki)
+cv2.createTrackbar('Kd x100', 'Control PID', int(Kd * 100), 100, update_kd)
+
+prev_time = time.time()
+print("=" * 50)
+print("Sistema de Balance: Plataforma + Pelota")
+print("=" * 50)
+print("CONFIGURACIÓN:")
+print(f"  • Centro servos: {center_angle}° (Rango: 0-180°)")
+print(f"  • Zona muerta: ±{DEAD_ZONE} píxeles")
+print(f"  • Suavizado: {smoothing}")
+print(f"  • Threshold plataforma: {THRESHOLD_PLATAFORMA}")
+print(f"  • PID: Kp={Kp} Ki={Ki} Kd={Kd}")
+print("\nDETECCIÓN:")
+print("  • PLATAFORMA NEGRA (HSV): Detecta área más grande de tonos oscuros")
+print("  • PELOTA AZUL: Posición para calcular error")
+print("  • Usa teclas '1'/'2' para ajustar threshold")
+print("\nCONTROLES:")
+print("  • 'q' → Salir")
+print("  • 'c' → Resetear integrales")
+print("  • '1' → Threshold -5")
+print("  • '2' → Threshold +5")
+print("  • Sliders → Ajustar PID en tiempo real")
+print("=" * 50)
+ 
+frame_count = 0
+fps_time = time.time()
+fps = 0
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        print("Error: No se pudo leer frame de la cámara")
+        break
+        
     frame = cv2.flip(frame, 1)
     height, width = frame.shape[:2]
     centrox, centroy = width//2, height//2
@@ -507,16 +506,16 @@ esp32.write(mensaje.encode())
     elif key == ord('2'):
         THRESHOLD_PLATAFORMA = min(250, THRESHOLD_PLATAFORMA + 5)
         print(f"Threshold: {THRESHOLD_PLATAFORMA}")
-    
-    print("\nCerrando sistema...")
-    cap.release()
-    if esp32:
-        esp32.write(f"{center_angle},{center_angle}\n".encode())
-        time.sleep(0.1)
-        esp32.close()
-        print("Conexión serial cerrada")
-    cv2.destroyAllWindows()
-    print("Sistema finalizado")
+
+print("\nCerrando sistema...")
+cap.release()
+if esp32:
+    esp32.write(f"{center_angle},{center_angle}\n".encode())
+    time.sleep(0.1)
+    esp32.close()
+    print("Conexión serial cerrada")
+cv2.destroyAllWindows()
+print("Sistema finalizado")
 
 ---
 
@@ -692,8 +691,9 @@ void volverAlCentro() {
     mensajeMostrado = false;
   }
 }
+```
 
-´´´
+---
 
 ## Instalación y Uso
 
@@ -704,6 +704,7 @@ void volverAlCentro() {
 5. Colocar la pelota sobre la plataforma.
 6. Observar la estabilización en tiempo real.
 
+---
 
 ## Conclusiones
 
@@ -712,7 +713,7 @@ void volverAlCentro() {
 * La estructura mecánica y servos de alto torque permiten estabilidad.
 * Se obtuvo un robot funcional capaz de mantener el equilibrio de una pelota.
 
-
+---
 
 ## Licencia
 
