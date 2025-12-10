@@ -274,7 +274,7 @@ while True:
     #cv2.imshow("Segmentado", seg)  #mascara final con color
     #cv2.imshow("hsv", hsv) 
 
-    cv2.imshow("contornos", out) 
+    cv2.imshow("contornos", out)
 
     if cv2.waitKey(1) & 0xFF == ord('x'):
         break
@@ -283,5 +283,242 @@ cap.release()
 cv2.destroyAllWindows()
 ```
 
+### **Código Python Vision por cámara. Calcular diferencia centro pelota a centro cámara**
+Este código realiza seguimiento de una pelota verde y calcula la posición relativa del objeto respecto al centro de la cámara. Es una versión de seguimiento visual sin la parte de comunicación Bluetooth.
+
+```
+import cv2
+import time
+import numpy as np
+
+cap = cv2.VideoCapture(0)  
+
+while True:
+    ok, img = cap.read()
+    cv2.flip(img, 1,img)
+    if not ok:
+        break
+
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+
+
+    #mostrar camara normal
+    cv2.imshow("Frame", img)
+
+    #cambio a hsv
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    #hacer mascara, solo mostrar un color
+    low  = np.array([35,  60,  60], dtype=np.uint8) # low es
+    high = np.array([85, 255, 255], dtype=np.uint8)
+    mask = cv2.inRange(hsv, low, high)
+
+    #mascara final
+    seg = cv2.bitwise_and(img, img, mask=mask)
+
+    #hacer contorno
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    out = img.copy()
+
+
+    area_mayor = 0
+    #checar area mayor
+    for actual in contours:
+        area = cv2.contourArea(actual)
+        if area > area_mayor:
+            area_mayor=area
+            contorno_mayor=actual
+        else: 
+            continue
+
+    cv2.drawContours(seg, contorno_mayor, -1, (0,255,0), 2)
+
+
+    (x, y), radius = cv2.minEnclosingCircle(contorno_mayor)
+    cv2.circle(out, (int(x), int(y)), int(radius), (0,255,255), 2)
+    cv2.circle(out, (int(x), int(y)), 2, (0,0,255), 2)
+
+    cv2.putText(out, f"x:{int(x)}, Y: {int(y)}", (0,30),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,0,0), 2)
+
+    #calcular si esta en el centro x, y
+    centrox = width // 2
+    centroy = height // 2
+    ErrorX = int(x) - centrox
+    ErrorY = int(y) - centroy
+
+
+    if ErrorX > 0:
+        direccionX = "Derecha"
+    elif ErrorX < 0:
+        direccionX = "Izquierda"
+    else:
+        direccionX = "X_OK"
+
+    if ErrorY > 0:
+        direccionY = "Abajo"
+    elif ErrorY < 0:
+        direccionY = "Arriba"
+    else:
+        direccionY = "Y_OK"
+
+    cv2.putText(out, f"{direccionX}, {direccionY}", (0,100),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,0,0), 2)
+
+    #cv2.imshow("Mask", mask) #mascara
+    #cv2.imshow("Segmentado", seg)  #mascara final con color
+    #cv2.imshow("hsv", hsv) 
+
+    cv2.imshow("contornos", out) 
+
+    if cv2.waitKey(1) & 0xFF == ord('x'):
+        break
+
+cap.release()
+cv2.destroyAllWindows() 
+```
+
+### **Código Python Vision por cámara. Enviar datos a ESP32**
+Este código es prácticamente lo mismo que al anterior pero este envia los datos calculados de error X y error Y al ESP32.
+
+```
+import cv2
+import numpy as np
+import bluetooth
+import time
+
+cap = cv2.VideoCapture(0)  
+
+
+
+# FUNCTION TO CONNECT TO ESP32
+port = 1
+sock = bluetooth.BluetoothSocket()  # Use the default constructor (no arguments)
+sock.settimeout(20)
+ 
+print("Attempting to connect to ESP32...")
+while True:
+    try:
+        sock.connect(("FC:B4:67:F1:8B:22", port)) #cambiar la direccion BT esp32
+        print("Connected to ESP32!")
+        break
+    except Exception as e:
+        print("Error in connection... retrying:", e)
+    time.sleep(1)
+
+
+
+while True:
+
+    ok, img = cap.read()
+    cv2.flip(img, 1,img)
+    if not ok:
+        break
+
+    #mostrar camara normal
+    cv2.imshow("Frame", img)
+
+    #cambio a hsv
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    #hacer mascara, solo mostrar un color
+    low  = np.array([35,  60,  60], dtype=np.uint8) # low es
+    high = np.array([85, 255, 255], dtype=np.uint8)
+    mask = cv2.inRange(hsv, low, high)
+
+    #mascara final
+    seg = cv2.bitwise_and(img, img, mask=mask)
+
+    #hacer contorno
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    out = img.copy()
+
+
+    area_mayor = 0
+    #checar area mayor
+    for actual in contours:
+        area = cv2.contourArea(actual)
+        if area > area_mayor:
+            area_mayor=area
+            contorno_mayor=actual
+        else: 
+            continue
+
+    cv2.drawContours(seg, contorno_mayor, -1, (0,255,0), 2)
+
+
+
+    (x, y), radius = cv2.minEnclosingCircle(contorno_mayor)
+    cv2.circle(out, (int(x), int(y)), int(radius), (0,255,255), 2)
+    cv2.circle(out, (int(x), int(y)), 2, (0,0,255), 2)
+
+    cv2.putText(out, f"x:{int(x)}, Y: {int(y)}", (0,30),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,0,0), 2)
+
+    #calcular si esta en el centro x, y
+    centrox = img.shape[1] // 2
+    centroy = img.shape[0] // 2
+    ErrorX = int(x) - centrox
+    ErrorY = int(y) - centroy
+
+
+    if ErrorX > 0:
+        direccionX = "Derecha"
+        try:
+            sock.send(direccionX.encode())  # encode the string to bytes
+            print("Sent:",direccionX)
+        except Exception as e:
+            print("Error sending data:", e)
+    elif ErrorX < 0:
+        direccionX = "Izquierda"
+        try:
+            sock.send(direccionX.encode())  # encode the string to bytes
+            print("Sent:",direccionX)
+        except Exception as e:
+            print("Error sending data:", e)
+    else:
+        direccionX = "X_OK"
+        try:
+            sock.send(direccionX.encode())  # encode the string to bytes
+            print("Sent:",direccionX)
+        except Exception as e:
+            print("Error sending data:", e)
+
+    if ErrorY > 0:
+        direccionY = "Abajo"
+        try:
+            sock.send(direccionY.encode())  # encode the string to bytes
+            print("Sent:",direccionY)
+        except Exception as e:
+            print("Error sending data:", e)
+    elif ErrorY < 0:
+        direccionY = "Arriba"
+        try:
+            sock.send(direccionY.encode())  # encode the string to bytes
+            print("Sent:",direccionY)
+        except Exception as e:
+            print("Error sending data:", e)
+    else:
+        try:
+            sock.send(direccionY.encode())  # encode the string to bytes
+            print("Sent:",direccionY)
+        except Exception as e:
+            print("Error sending data:", e)
+        direccionY = "Y_OK"
+    
+    cv2.putText(out, f"{direccionX}, {direccionY}", (0,100),cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255,0,0), 2)
+   
+
+    #cv2.imshow("Mask", mask) #mascara
+    #cv2.imshow("Segmentado", seg)  #mascara final con color
+    #cv2.imshow("hsv", hsv) 
+
+    cv2.imshow("contornos", out) 
+
+    if cv2.waitKey(1) & 0xFF == ord('x'):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+```
 
 
